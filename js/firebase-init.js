@@ -4,12 +4,12 @@
 // =============================================
 
 const firebaseConfig = {
-    apiKey:            "AIzaSyChJZ85i7oWdJ1Zd5jHpTJB9m466ZOt8Vk",
-    authDomain:        "ccc-reparacion.firebaseapp.com",
-    projectId:         "ccc-reparacion",
-    storageBucket:     "ccc-reparacion.firebasestorage.app",
-    messagingSenderId: "1014712139301",
-    appId:             "1:1014712139301:web:00a6013a77fa98e6c0c9cc"
+    apiKey:            "AIzaSyAb81JtYtLsT6FBqzIgy6HNV8FFih1ksz0",
+    authDomain:        "ccc-sistema.firebaseapp.com",
+    projectId:         "ccc-sistema",
+    storageBucket:     "ccc-sistema.firebasestorage.app",
+    messagingSenderId: "149098558081",
+    appId:             "1:149098558081:web:623fc71d816692b94a9380"
 };
 // (La apiKey de Firebase NO es un secreto: lo que protege los datos
 //  son el login y las reglas de Firestore.)
