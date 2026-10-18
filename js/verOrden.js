@@ -16,6 +16,18 @@ function capitalizar(texto){
         .join(" ");
 }
 
+// Una orden está CERRADA cuando está LISTO (esperando cobro) o ENTREGADO (cobrada).
+// Cerrada: no se puede cambiar nada, salvo las observaciones del técnico.
+function ordenCerrada(o){
+    return o.estado === "LISTO" || o.estado === "ENTREGADO";
+}
+
+// Solo el administrador puede reabrir una orden LISTO que todavía no se cobró
+// (por si se marcó LISTO por error).
+function puedeReabrirOrden(o){
+    return o.estado === "LISTO" && !o.cobrada && esAdmin();
+}
+
 function verOrden(id){
     if (!verificarAcceso()) return;
 
@@ -27,6 +39,8 @@ function verOrden(id){
     }
 
     const observaciones = orden.trabajo.observaciones || "";
+    const cerrada = ordenCerrada(orden);
+    const bloqEstado = cerrada && !puedeReabrirOrden(orden);
     const historial = orden.historial || [];
 
     let filasHistorial = "";
@@ -55,6 +69,12 @@ function verOrden(id){
 
         <h1>ORDEN N° ${orden.numero}</h1>
 
+        ${cerrada ? `
+        <div style="background:rgba(231,76,60,.12); border:1px solid rgba(231,76,60,.45); border-radius:10px;
+                    padding:12px 16px; margin-bottom:18px; max-width:700px; font-size:13px; font-weight:700; color:#F5B7B1;">
+            🔒 ORDEN CERRADA (${orden.estado}). Ya no se puede modificar nada, excepto las observaciones del técnico.
+        </div>` : ""}
+
         <!-- PANEL PRE-IMPRESIÓN -->
         <div id="panelImprimir" style="
             background: rgba(255,255,255,0.07);
@@ -67,13 +87,13 @@ function verOrden(id){
             <div style="font-size:13px; font-weight:800; color:#9ED1F7; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
                 🔧 TÉCNICO Y REPUESTO
             </div>
-            <div style="font-size:12px; color:#aaa; margin-bottom:14px;">Completá estos campos para habilitar el estado <strong style='color:#D4EDDA;'>LISTO</strong>.</div>
+            <div style="font-size:12px; color:#aaa; margin-bottom:14px;">${cerrada ? "Datos bloqueados porque la orden está cerrada." : "Completá estos campos para habilitar el estado <strong style='color:#D4EDDA;'>LISTO</strong>."}</div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
 
                 <div class="campo">
                     <label style="color:white;">TÉCNICO QUE REALIZÓ EL TRABAJO</label>
-                    <select id="selectTecnico" onchange="actualizarPanelImpresion(${orden.id})" style="color:black;">
+                    <select id="selectTecnico" ${cerrada ? "disabled" : ""} onchange="actualizarPanelImpresion(${orden.id})" style="color:black;">
                         <option value="">— SELECCIONÁ UN TÉCNICO —</option>
                         ${tecnicos.filter(esTecnico).map(t => `
                             <option value="${t.id}" ${orden.tecnicoId === t.id ? "selected" : ""}>
@@ -88,6 +108,7 @@ function verOrden(id){
                     <input
                         type="number"
                         id="costoRepuesto"
+                        ${cerrada ? "disabled" : ""}
                         min="0"
                         placeholder="0"
                         value="${orden.costoRepuesto ?? ''}"
@@ -139,7 +160,7 @@ function verOrden(id){
             </div>
             <div>
                 <label><strong>ESTADO:</strong></label>
-                <select id="estadoOrden" onchange="cambiarEstado(${orden.id})">
+                <select id="estadoOrden" ${bloqEstado ? "disabled" : ""} onchange="cambiarEstado(${orden.id})">
                     <option value="INGRESADO"           ${orden.estado==="INGRESADO"            ? "selected":""}>INGRESADO</option>
                     <option value="EN REVISION"         ${orden.estado==="EN REVISION"          ? "selected":""}>EN REVISIÓN</option>
                     <option value="PRESUPUESTO ENVIADO" ${orden.estado==="PRESUPUESTO ENVIADO"  ? "selected":""}>PRESUPUESTO ENVIADO</option>
@@ -173,7 +194,14 @@ function verOrden(id){
 
         <h2>TRABAJO</h2>
         <table>
-            <tr><th>PRESUPUESTO</th>       <td>$${fm(orden.trabajo.presupuesto)}</td></tr>
+            <tr><th>PRESUPUESTO</th>       <td>${cerrada
+                ? "$" + fm(orden.trabajo.presupuesto)
+                : `<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                       <input type="number" id="presupuestoOrden" min="0" value="${orden.trabajo.presupuesto || 0}"
+                              onkeydown="if(event.key==='Enter') cambiarPresupuesto(${orden.id})"
+                              style="color:black; max-width:160px;">
+                       <button class="guardar-btn" onclick="cambiarPresupuesto(${orden.id})" style="margin:0; padding:8px 16px;">ACTUALIZAR</button>
+                   </div>`}</td></tr>
             <tr><th>ADELANTO</th>          <td>$${fm(orden.trabajo.adelanto)}</td></tr>
             <tr><th>REVISAN FUNCIONES</th> <td>${orden.trabajo.revisanFunciones}</td></tr>
             <tr><th>FALLA REPORTADA</th>   <td>${orden.trabajo.fallaReportada}</td></tr>
@@ -240,6 +268,7 @@ function actualizarPanelImpresion(id){
     const costoRepEl    = document.getElementById("costoRepuesto");
     const costoRepuesto = costoRepEl ? Number(costoRepEl.value) || 0 : 0;
     const tecnico       = tecnicos.find(t => t.id === tecnicoId);
+    const cerrada       = ordenCerrada(orden);
     const resumenDiv    = document.getElementById("resumenTecnico");
 
     const completo = tecnicoId !== "" && costoRepEl && costoRepEl.value.trim() !== "";
@@ -282,6 +311,9 @@ function actualizarPanelImpresion(id){
                 </div>
             </div>
         `;
+
+        // Orden cerrada: solo se muestra el resumen, no se modifica nada
+        if(cerrada) return;
 
         // Registro de cambios (solo si realmente cambió algo)
         const tecAnterior = tecnicos.find(t => t.id === orden.tecnicoId);
@@ -738,6 +770,13 @@ function cambiarEstado(id){
 
     const nuevoEstado = document.getElementById("estadoOrden").value;
 
+    // Orden cerrada: no se puede cambiar el estado (salvo reabrir un LISTO sin cobrar, solo admin)
+    if(ordenCerrada(orden) && !puedeReabrirOrden(orden)){
+        alert("LA ORDEN ESTÁ CERRADA: YA NO SE PUEDE CAMBIAR EL ESTADO.");
+        document.getElementById("estadoOrden").value = orden.estado;
+        return;
+    }
+
     // Validar: para pasar a LISTO se necesita técnico y costo de repuesto cargados
     if(nuevoEstado === "LISTO"){
         const tieneTecnico  = orden.tecnicoId && orden.tecnicoId !== "";
@@ -764,6 +803,52 @@ function cambiarEstado(id){
         tipo:    "ESTADO",
         detalle: nuevoEstado
     });
+
+    guardarDatos();
+    verOrden(id);
+}
+
+
+function cambiarPresupuesto(id){
+    const orden = ordenes.find(o => o.id === id);
+    if(!orden) return;
+
+    if(ordenCerrada(orden)){
+        alert("LA ORDEN ESTÁ CERRADA: YA NO SE PUEDE MODIFICAR EL PRESUPUESTO.");
+        verOrden(id);
+        return;
+    }
+
+    const el    = document.getElementById("presupuestoOrden");
+    const nuevo = Number(el.value);
+
+    if(el.value.trim() === "" || isNaN(nuevo) || nuevo < 0){
+        alert("INGRESÁ UN PRESUPUESTO VÁLIDO.");
+        return;
+    }
+
+    const anterior = orden.trabajo.presupuesto || 0;
+    if(nuevo === anterior) return;
+
+    const adelanto = orden.trabajo.adelanto || 0;
+    if(nuevo < adelanto){
+        alert("EL PRESUPUESTO NO PUEDE SER MENOR AL ADELANTO ($" + fm(adelanto) + ").");
+        el.value = anterior;
+        return;
+    }
+
+    const fecha = obtenerFechaArgentina();
+    orden.trabajo.presupuesto = nuevo;
+    orden.fechaUltimaModificacion = fecha;
+
+    if(!orden.historial) orden.historial = [];
+    orden.historial.push({
+        fecha:   fecha,
+        tipo:    "PRESUPUESTO",
+        detalle: `$${fm(anterior)} → $${fm(nuevo)}`
+    });
+
+    guardarRegistro("ÓRDENES", "PRESUPUESTO", `Orden ${descOrden(orden)}: presupuesto $${fm(anterior)} → $${fm(nuevo)}`);
 
     guardarDatos();
     verOrden(id);
