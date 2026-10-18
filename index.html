@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>CCC Reparación de Celulares</title>
+    <link rel="icon" type="image/png" sizes="256x256" href="img/favicon.png">
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ══════════════════════════════════════════
+           LANDING PAGE
+        ══════════════════════════════════════════ */
+        #landing {
+            position: fixed;
+            inset: 0;
+            background: #1F2A44;
+            color: white;
+            font-family: 'Manrope', sans-serif;
+            overflow-y: auto;
+            z-index: 9999;
+            transition: opacity .35s ease, visibility .35s ease;
+        }
+        #landing.oculto {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* HEADER */
+        .lp-header {
+            position: sticky; top: 0; z-index: 50;
+            border-bottom: 1px solid rgba(255,255,255,.1);
+            background: rgba(23,33,55,.9);
+            backdrop-filter: blur(16px);
+        }
+        .lp-header-inner {
+            max-width: 1280px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 80px; padding: 0 24px;
+        }
+        .lp-logo {
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 900; font-size: 20px; letter-spacing: -.03em;
+            text-decoration: none; color: white;
+        }
+        .lp-logo-img { height: 56px; width: auto; display: block; }
+        .lp-logo-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: #8B0000; display: grid; place-items: center;
+            box-shadow: 0 8px 24px rgba(139,0,0,.35); flex-shrink: 0;
+        }
+        .lp-nav { display: flex; align-items: center; gap: 4px; list-style: none; }
+        .lp-nav a {
+            color: #CBD5E1; text-decoration: none; font-size: 13px;
+            font-weight: 600; padding: 8px 14px; border-radius: 999px;
+            transition: background .2s, color .2s;
+        }
+        .lp-nav a:hover { background: rgba(255,255,255,.08); color: white; }
+
+        /* HERO */
+        .lp-hero {
+            position: relative; min-height: 760px;
+            display: flex; align-items: center; overflow: hidden;
+        }
+        .lp-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .lp-hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, rgba(23,33,55,.98) 0%, rgba(31,42,68,.85) 48%, rgba(31,42,68,.35) 100%);
+        }
+        .lp-hero-blob {
+            position: absolute; left: -80px; bottom: 0;
+            width: 288px; height: 288px; border-radius: 50%;
+            background: rgba(139,0,0,.15); filter: blur(48px);
+        }
+        .lp-hero-content {
+            position: relative; max-width: 1280px; margin: 0 auto;
+            width: 100%; padding: 96px 24px;
+        }
+        .lp-hero-inner { max-width: 760px; }
+        .lp-hero-sub  { font-size: clamp(1.2rem,3vw,1.9rem); font-weight: 500; color: #CBD5E1; margin: 0 0 12px; }
+        .lp-hero-title { font-size: clamp(2.8rem,7vw,5.5rem); font-weight: 900; line-height: .95; letter-spacing: -.055em; margin: 0 0 16px; }
+        .lp-hero-tagline { font-size: clamp(1.1rem,2.8vw,1.8rem); font-weight: 800; color: #FF7474; margin: 0 0 20px; }
+        .lp-hero-desc { font-size: clamp(1rem,2.2vw,1.55rem); line-height: 1.6; color: #E2E8F0; max-width: 540px; margin: 0 0 36px; }
+        .lp-cta {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: #8B0000; color: white; text-decoration: none;
+            font-weight: 700; font-size: 15px; padding: 16px 28px;
+            border-radius: 14px; box-shadow: 0 14px 35px rgba(139,0,0,.3);
+            transition: transform .2s, background .2s;
+        }
+        .lp-cta:hover { transform: translateY(-2px); background: #a80000; }
+
+        /* SECCIONES */
+        .lp-section { padding: 80px 24px; scroll-margin-top: 80px; }
+
+        /* CONTACTO */
+        .lp-contacto-card {
+            max-width: 1280px; margin: 0 auto;
+            display: grid; border-radius: 32px;
+            background: #7a1f1f;
+            box-shadow: 0 28px 80px rgba(10,15,30,.25); overflow: hidden;
+        }
+        @media (min-width: 1024px) {
+            .lp-contacto-card { grid-template-columns: .75fr 1.25fr; }
+            .lp-contacto-left { border-right: 1px solid rgba(255,255,255,.15); border-bottom: none !important; }
+        }
+        .lp-contacto-left  { padding: 48px; border-bottom: 1px solid rgba(255,255,255,.15); }
+        .lp-contacto-right { display: grid; gap: 28px; padding: 48px; }
+        @media (min-width: 640px) { .lp-contacto-right { grid-template-columns: 1fr 1fr; } }
+        .lp-label { font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #FCA5A5; margin-bottom: 14px; }
+        .lp-label-red { color: #FF7474; }
+        .lp-section-title { font-size: clamp(1.8rem,4vw,3rem); font-weight: 900; letter-spacing: -.04em; margin: 0; }
+        .lp-contacto-right p { font-size: 15px; font-weight: 700; margin: 0 0 8px; }
+        .lp-contacto-right .desc { font-size: 14px; line-height: 1.65; color: rgba(254,226,226,.8); margin: 0 0 16px; font-weight: 400; }
+        .lp-contacto-right a { color: #FCA5A5; text-decoration: none; border-bottom: 1px solid #FCA5A5; padding-bottom: 2px; font-weight: 700; }
+
+        /* PRODUCTOS */
+        .lp-productos-header { margin-bottom: 48px; max-width: 600px; }
+        .lp-productos-grid { display: grid; gap: 24px; max-width: 1280px; margin: 0 auto; }
+        @media (min-width: 768px) { .lp-productos-grid { grid-template-columns: repeat(3,1fr); } }
+        .lp-card {
+            border-radius: 24px; border: 1px solid #475065;
+            background: #2e3951; padding: 24px;
+            box-shadow: 0 22px 55px rgba(8,14,30,.25);
+            transition: transform .3s, border-color .3s;
+        }
+        .lp-card:hover { transform: translateY(-4px); border-color: rgba(148,163,184,.6); }
+        .lp-card-img { display: grid; place-items: center; height: 192px; border-radius: 16px; background: #253047; }
+        .lp-card h3 { font-size: 22px; font-weight: 800; margin: 24px 0 0; }
+        .lp-card details { margin-top: 12px; color: #94A3B8; }
+        .lp-card summary { cursor: pointer; list-style: none; font-size: 13px; font-weight: 600; color: #94A3B8; }
+        .lp-card summary::-webkit-details-marker { display: none; }
+        .lp-card details p { margin-top: 10px; font-size: 13px; line-height: 1.65; }
+        .lp-card-price { margin-top: 28px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1); font-size: 18px; font-weight: 900; }
+
+        /* INGRESO */
+        .lp-ingreso-card {
+            max-width: 1000px; margin: 0 auto;
+            display: flex; flex-direction: column;
+            align-items: flex-start; justify-content: space-between; gap: 32px;
+            border-radius: 32px; border: 1px solid rgba(255,255,255,.1);
+            background: #263149; padding: 48px;
+            box-shadow: 0 28px 70px rgba(8,14,30,.25);
+        }
+        @media (min-width: 768px) { .lp-ingreso-card { flex-direction: row; align-items: center; } }
+        .lp-ingreso-card h2 { font-size: clamp(1.6rem,3vw,2.2rem); font-weight: 900; margin: 10px 0; }
+        .lp-ingreso-card p  { font-size: 16px; line-height: 1.65; color: #94A3B8; margin: 0; }
+        .btn-ingresa {
+            flex-shrink: 0; border-radius: 16px;
+            border: 1px solid #475065; background: #2e3951;
+            padding: 18px 40px; font-size: 17px; font-weight: 800;
+            color: white; cursor: pointer;
+            box-shadow: 0 16px 40px rgba(8,14,30,.3);
+            transition: transform .2s, border-color .2s, background .2s;
+            font-family: 'Manrope', sans-serif;
+        }
+        .btn-ingresa:hover { transform: translateY(-2px); border-color: #94A3B8; background: #35415b; }
+
+        /* FOOTER */
+        .lp-footer { border-top: 1px solid rgba(255,255,255,.1); padding: 32px 24px; text-align: center; font-size: 13px; color: #64748B; }
+
+        /* NAV responsive */
+        @media (max-width: 500px) {
+            .lp-nav a { padding: 6px 8px; font-size: 12px; }
+            .lp-logo-img { height: 38px; }
+        }
+
+        /* HEADER: respeta notch / isla dinámica y baja un poco en teléfonos */
+        .lp-header {
+            padding-left: env(safe-area-inset-left, 0px);
+            padding-right: env(safe-area-inset-right, 0px);
+        }
+        @media (max-width: 768px) {
+            .lp-header { padding-top: calc(env(safe-area-inset-top, 0px) + 16px); }
+            .lp-header-inner { height: 68px; padding: 0 16px; }
+            .lp-logo-img { height: 44px; }
+        }
+        .lp-footer { padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
+
+        /* PRODUCTOS DEL STOCK (publicados desde Stock) */
+        .lp-sub-title { font-size: 22px; font-weight: 800; margin: 56px 0 24px; color: #E2E8F0; }
+        .lp-card { min-width: 0; }
+        .lp-card-img { overflow: hidden; }
+        .lp-card-img img { width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 12px; }
+        .lp-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+        .lp-price-old { text-decoration: line-through; color: #94A3B8; font-size: 15px; font-weight: 700; }
+        .lp-badge-desc { background: #16A34A; color: #fff; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 6px; }
+        .lp-price-new { font-size: 22px; font-weight: 900; color: #F8FAFC; }
+        .lp-agotado { margin-top: 8px; font-size: 12px; font-weight: 700; color: #FCA5A5; }
+
+        /* APP SHELL */
+        #app-shell { display: none; width: 100%; height: 100vh; }
+        #app-shell.visible { display: flex; }
+    </style>
+</head>
+
+<body style="margin:0;padding:0;background:#1F2A44;">
+
+    <!-- ══════════════════════════════════════════
+         LANDING PAGE
+    ══════════════════════════════════════════ -->
+    <div id="landing">
+
+        <header class="lp-header">
+            <div class="lp-header-inner">
+                <a href="#inicio" class="lp-logo" aria-label="CCC, ir al inicio">
+                    <img class="lp-logo-img" src="img/logo-blanco.png" alt="CCC Reparación de Celulares">
+                </a>
+                <nav aria-label="Navegación principal">
+                    <ul class="lp-nav">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                        <li><a href="#productos">Servicios</a></li>
+                        <li><a href="#ingreso">Ingreso</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <!-- HERO -->
+        <section id="inicio" class="lp-hero">
+            <img class="lp-hero-img"
+                src="https://images.unsplash.com/photo-1729997309795-203b2e1b0234?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=85&w=1800"
+                alt="Técnico trabajando en un taller de reparación">
+            <div class="lp-hero-overlay"></div>
+            <div class="lp-hero-blob"></div>
+            <div class="lp-hero-content">
+                <div class="lp-hero-inner">
+                    <p class="lp-hero-sub">Tu teléfono, como nuevo</p>
+                    <h1 class="lp-hero-title">Reparamos lo que<br>te conecta.</h1>
+                    <p class="lp-hero-tagline">Rápido. Claro. Con garantía.</p>
+                    <p class="lp-hero-desc">Diagnóstico experto y repuestos de calidad para que vuelvas a usar tu equipo sin esperas.</p>
+                    <a href="#productos" class="lp-cta">Ver reparaciones <span aria-hidden="true">→</span></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto" class="lp-section">
+            <div class="lp-contacto-card">
+                <div class="lp-contacto-left">
+                    <p class="lp-label">Contacto</p>
+                    <h2 class="lp-section-title">¿Cómo podemos ayudarte?</h2>
+                </div>
+                <div class="lp-contacto-right">
+                    <div>
+                        <p>Antes de escribirnos</p>
+                        <p class="desc">Tené a mano la marca, el modelo y una breve descripción del problema. Si el equipo sufrió una caída o humedad, contanos.</p>
+                    </div>
+                    <div>
+                        <p>Respuesta ágil</p>
+                        <p class="desc">Atendemos de lunes a sábado. Te orientaremos con un diagnóstico inicial y el siguiente paso para tu reparación.</p>
+                        <a href="https://wa.me/5491173740412?text=Hola!%20Solicito%20mas%20informacion." target="_blank" rel="noopener noreferrer">Contactanos</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICIOS -->
+        <section id="productos" class="lp-section">
+            <div style="max-width:1280px;margin:0 auto;">
+                <div class="lp-productos-header">
+                    <p class="lp-label lp-label-red">Productos y servicios</p>
+                    <h2 class="lp-section-title">Soluciones listas para vos</h2>
+                    <p style="margin-top:14px;font-size:16px;line-height:1.65;color:#94A3B8;">Explorá nuestros servicios más solicitados.</p>
+                </div>
+                <div class="lp-productos-grid">
+                    <article class="lp-card">
+                        <div class="lp-card-img">
+                            <svg width="128" height="128" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+                                <circle cx="80" cy="80" r="70" fill="#E85D5D" fill-opacity=".12"/>
+                                <rect x="48" y="20" width="64" height="120" rx="13" fill="#172137" stroke="#E85D5D" stroke-width="3"/>
+                                <rect x="55" y="35" width="50" height="86" rx="4" fill="#26334E"/>
+                                <path d="M61 97 75 81l10 10 8-9 12 15" stroke="#E85D5D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="80" cy="130" r="4" fill="#E85D5D"/>
+                                <path d="M72 28h16" stroke="#64708A" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>Cambio de pantalla</h3>
+                        <details><summary><span>Ver descripción +</span></summary><p>Pantalla, instalación y prueba de funcionamiento incluidas. Compatible con los modelos más solicitados.</p></details>
+                        <div class="lp-card-price" style="color:#E85D5D;">Desde $49.900</div>
+                    </article>
+                    <article class="lp-card">
+                        <div class="lp-card-img">
+                            <svg width="128" height="128" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+                                <circle cx="80" cy="80" r="70" fill="#F4B860" fill-opacity=".12"/>
+                                <rect x="48" y="20" width="64" height="120" rx="13" fill="#172137" stroke="#F4B860" stroke-width="3"/>
+                                <rect x="55" y="35" width="50" height="86" rx="4" fill="#26334E"/>
+                                <path d="M61 97 75 81l10 10 8-9 12 15" stroke="#F4B860" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="80" cy="130" r="4" fill="#F4B860"/>
+                                <path d="M72 28h16" stroke="#64708A" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>Batería nueva</h3>
+                        <details><summary><span>Ver descripción +</span></summary><p>Recuperá la autonomía de tu equipo con diagnóstico previo y garantía sobre la instalación.</p></details>
+                        <div class="lp-card-price" style="color:#F4B860;">Desde $29.900</div>
+                    </article>
+                    <article class="lp-card">
+                        <div class="lp-card-img">
+                            <svg width="128" height="128" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+                                <circle cx="80" cy="80" r="70" fill="#68C4B8" fill-opacity=".12"/>
+                                <rect x="48" y="20" width="64" height="120" rx="13" fill="#172137" stroke="#68C4B8" stroke-width="3"/>
+                                <rect x="55" y="35" width="50" height="86" rx="4" fill="#26334E"/>
+                                <path d="M61 97 75 81l10 10 8-9 12 15" stroke="#68C4B8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="80" cy="130" r="4" fill="#68C4B8"/>
+                                <path d="M72 28h16" stroke="#64708A" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>Puerto de carga</h3>
+                        <details><summary><span>Ver descripción +</span></summary><p>Limpieza o reemplazo del conector, según el diagnóstico de nuestros técnicos.</p></details>
+                        <div class="lp-card-price" style="color:#68C4B8;">Desde $34.900</div>
+                    </article>
+                </div>
+                <div id="lpProductosWeb"></div>
+            </div>
+        </section>
+
+        <!-- INGRESO AL SISTEMA -->
+        <section id="ingreso" class="lp-section">
+            <div class="lp-ingreso-card">
+                <div style="max-width:560px;">
+                    <p class="lp-label lp-label-red">Ingreso</p>
+                    <h2>Seguí tu reparación</h2>
+                    <p>Si tenés una orden activa o pendiente, ingresá para revisar su estado, las novedades del técnico y la fecha estimada de entrega.</p>
+                </div>
+                <button class="btn-ingresa" onclick="entrarAlSistema()">Ingresá</button>
+            </div>
+        </section>
+
+        <footer class="lp-footer">© 2025 CCC Reparación de Celulares. Tecnología que vuelve a funcionar.</footer>
+
+    </div><!-- /landing -->
+
+
+    <!-- ══════════════════════════════════════════
+         APP SHELL — sistema CCC
+    ══════════════════════════════════════════ -->
+    <div id="app-shell">
+
+        <!--
+            El botón hamburguesa arranca OCULTO (display:none en CSS).
+            Solo se muestra cuando el usuario está dentro de la
+            administración con sesión activa (mostrarBotonMenu(true)).
+            En login y portal cliente permanece oculto.
+        -->
+        <button class="btn-menu-mobile" id="btnMenuMobile" onclick="toggleSidebar()" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="cerrarSidebar()"></div>
+
+        <div class="sidebar" style="display:none;" id="sidebar">
+            <div class="logo-sidebar"><img src="img/logo.png" alt="CCC Reparación de Celulares"></div>
+            <button onclick="mostrarInicio(); cerrarSidebar()">Inicio</button>
+            <button onclick="mostrarOrdenes(); cerrarSidebar()">Crear Orden</button>
+            <button onclick="mostrarListadoOrdenes(); cerrarSidebar()">Órdenes</button>
+            <button onclick="mostrarClientes(); cerrarSidebar()">Clientes</button>
+            <button onclick="mostrarStock(); cerrarSidebar()">Stock</button>
+            <button onclick="mostrarFacturacion(); cerrarSidebar()">Facturación</button>
+            <button onclick="mostrarCaja(); cerrarSidebar()">Caja</button>
+            <button onclick="mostrarTecnicos(); cerrarSidebar()">Técnicos</button>
+        </div>
+
+        <div class="contenido" id="contenido"></div>
+
+    </div><!-- /app-shell -->
+
+
+    <!-- SCRIPTS -->
+    <script>
+        // ── SIDEBAR MÓVIL ──────────────────────────
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            if (sidebar.classList.contains("abierto")) {
+                cerrarSidebar();
+            } else {
+                sidebar.classList.add("abierto");
+                overlay.classList.add("visible");
+                document.body.style.overflow = "hidden";
+            }
+        }
+
+        function cerrarSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            sidebar.classList.remove("abierto");
+            overlay.classList.remove("visible");
+            document.body.style.overflow = "";
+        }
+
+        let touchStartX = 0;
+        document.addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        document.addEventListener("touchend",   e => { if (touchStartX - e.changedTouches[0].clientX > 60) cerrarSidebar(); }, { passive: true });
+
+        // Solo se muestra con sesión de admin/empleado activa.
+        // auth.js llama mostrarBotonMenu(true) al hacer login,
+        // y mostrarBotonMenu(false) al cerrar sesión o en login/portal.
+        // La hamburguesa se controla por CSS con la clase "con-menu" en <body>.
+        function mostrarBotonMenu(visible) {
+            document.body.classList.toggle("con-menu", !!visible);
+        }
+
+
+        // ── SCROLL SUAVE DE LA LANDING (velocidad media) ──────────
+        let _lpAnimId = null;
+        function scrollSuave(destino) {
+            const landing = document.getElementById("landing");
+            const header  = landing.querySelector(".lp-header");
+            const inicio  = landing.scrollTop;
+
+            let objetivo = destino.id === "inicio"
+                ? 0
+                : destino.getBoundingClientRect().top - landing.getBoundingClientRect().top
+                  + landing.scrollTop - (header ? header.offsetHeight : 0) + 1;
+            objetivo = Math.max(0, Math.min(objetivo, landing.scrollHeight - landing.clientHeight));
+
+            const distancia = objetivo - inicio;
+            if (Math.abs(distancia) < 2) return;
+
+            if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                landing.scrollTop = objetivo;
+                return;
+            }
+
+            // Duración media: entre 0,7 s y 1,3 s según la distancia
+            const duracion = Math.min(1300, Math.max(700, Math.abs(distancia) * 0.5));
+            const t0 = performance.now();
+            const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+            cancelAnimationFrame(_lpAnimId);
+            function paso(ahora) {
+                const t = Math.min(1, (ahora - t0) / duracion);
+                landing.scrollTop = inicio + distancia * ease(t);
+                if (t < 1) _lpAnimId = requestAnimationFrame(paso);
+            }
+            _lpAnimId = requestAnimationFrame(paso);
+        }
+
+        (function() {
+            const landing = document.getElementById("landing");
+            if (!landing) return;
+
+            landing.addEventListener("click", function(e) {
+                const a = e.target.closest('a[href^="#"]');
+                if (!a) return;
+                const destino = document.getElementById(a.getAttribute("href").slice(1));
+                if (!destino) return;
+                e.preventDefault();
+                scrollSuave(destino);
+            });
+
+            // Si la persona mueve la pantalla con la rueda o el dedo, se cancela la animación
+            ["wheel", "touchstart"].forEach(ev =>
+                landing.addEventListener(ev, () => cancelAnimationFrame(_lpAnimId), { passive: true })
+            );
+        })();
+
+        // ── ENTRAR AL SISTEMA ──────────────────────
+        function entrarAlSistema() {
+            document.getElementById("landing").classList.add("oculto");
+            const shell = document.getElementById("app-shell");
+            shell.classList.add("visible");
+            document.body.style.display  = "flex";
+            document.body.style.height   = "100vh";
+        }
+
+        // Si ya hay sesión activa al cargar la página, saltar la landing
+        (function() {
+            try {
+                if (sessionStorage.getItem("sesionCCC") || sessionStorage.getItem("sesionClienteCCC")) {
+                    entrarAlSistema();
+                }
+            } catch(e) {}
+        })();
+    </script>
+
+    <!-- Firebase (conexión con la base de datos y el login) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-init.js"></script>
+
+    <script src="js/logo.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/fechas.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/crearOrden.js"></script>
+    <script src="js/listadoOrdenes.js"></script>
+    <script src="js/verOrden.js"></script>
+    <script src="js/clientes.js"></script>
+    <script src="js/clientePortal.js"></script>
+    <script src="js/stock.js"></script>
+    <script src="js/facturacion.js"></script>
+    <script src="js/caja.js"></script>
+    <script src="js/inicio.js"></script>
+    <script src="js/tecnicos.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
